@@ -15,6 +15,7 @@ import {
   Maximize2,
   PictureInPicture2,
   RefreshCw,
+  RotateCw,
   Tv,
   AlertCircle,
   X,
@@ -252,11 +253,16 @@ export default function App() {
   const [searchMode, setSearchMode] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isFullscreenTV, setIsFullscreenTV] = useState<boolean>(false);
+  const [isLandscapeRotated, setIsLandscapeRotated] = useState<boolean>(false);
+  const [isViewportPortrait, setIsViewportPortrait] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerHeight > window.innerWidth : false
+  );
   const [isPiP, setIsPiP] = useState<boolean>(false);
   const [isFloatingPiP, setIsFloatingPiP] = useState<boolean>(false);
 
   const searchContainerRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const videoStageRef = useRef<HTMLDivElement | null>(null);
 
   // Favorites
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -294,6 +300,80 @@ export default function App() {
       // ignore storage errors
     }
   }, [favorites]);
+
+  // Track physical device viewport orientation (portrait vs landscape) on mobile
+  useEffect(() => {
+    const updateViewportOrientation = () => {
+      const portrait = window.innerHeight > window.innerWidth;
+      setIsViewportPortrait(portrait);
+    };
+
+    updateViewportOrientation();
+    window.addEventListener('resize', updateViewportOrientation);
+    window.addEventListener('orientationchange', updateViewportOrientation);
+    screen.orientation?.addEventListener?.('change', updateViewportOrientation);
+    return () => {
+      window.removeEventListener('resize', updateViewportOrientation);
+      window.removeEventListener('orientationchange', updateViewportOrientation);
+      screen.orientation?.removeEventListener?.('change', updateViewportOrientation);
+    };
+  }, []);
+
+  // Helper to lock/unlock native mobile screen orientation when supported
+  const setNativeLandscapeLock = useCallback(async (lockLandscape: boolean) => {
+    const orientationApi = screen.orientation as
+      | (ScreenOrientation & {
+          lock?: (mode: string) => Promise<void>;
+          unlock?: () => void;
+        })
+      | undefined;
+
+    try {
+      if (lockLandscape) {
+        if (!document.fullscreenElement && videoStageRef.current?.requestFullscreen) {
+          await videoStageRef.current.requestFullscreen().catch(() => {});
+        }
+        if (orientationApi?.lock) {
+          await orientationApi.lock('landscape');
+        }
+      } else {
+        if (orientationApi?.unlock) {
+          orientationApi.unlock();
+        }
+        if (document.fullscreenElement && document.exitFullscreen) {
+          await document.exitFullscreen().catch(() => {});
+        }
+      }
+    } catch {
+      // Browser or iframe policy may block native orientation lock; CSS landscape rotation handles it
+    }
+  }, []);
+
+  // Toggle mobile landscape screen rotation (supports both native Screen Orientation API and 90° CSS landscape rotation)
+  const handleToggleRotateScreen = useCallback(
+    (e?: React.MouseEvent) => {
+      if (e) e.stopPropagation();
+      setAutoRotateBanner(false);
+      setIsFloatingPiP(false);
+
+      setIsLandscapeRotated((prev) => {
+        const next = !prev;
+        if (next) {
+          setIsFullscreenTV(true);
+          if (videoRef.current) {
+            videoRef.current.muted = false;
+            setIsMuted(false);
+          }
+          setNativeLandscapeLock(true);
+        } else {
+          setIsFullscreenTV(false);
+          setNativeLandscapeLock(false);
+        }
+        return next;
+      });
+    },
+    [setNativeLandscapeLock]
+  );
 
   // Sync native Picture-in-Picture browser events with React state
   useEffect(() => {
@@ -641,9 +721,18 @@ export default function App() {
           if (next) {
             setAutoRotateBanner(false);
             setIsFloatingPiP(false);
+          } else {
+            setIsLandscapeRotated(false);
+            setNativeLandscapeLock(false);
           }
           return next;
         });
+        return;
+      }
+
+      if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        handleToggleRotateScreen();
         return;
       }
 
@@ -651,6 +740,8 @@ export default function App() {
 
       if (e.key === 'Escape' || e.key === 'Backspace') {
         setIsFullscreenTV(false);
+        setIsLandscapeRotated(false);
+        setNativeLandscapeLock(false);
       } else if (e.key === 'ArrowUp' || e.key === 'ChannelUp') {
         e.preventDefault();
         if (!activeChannel || filteredChannels.length === 0) return;
@@ -674,7 +765,14 @@ export default function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hasChosenLanguage, isFullscreenTV, activeChannel, filteredChannels]);
+  }, [
+    hasChosenLanguage,
+    isFullscreenTV,
+    activeChannel,
+    filteredChannels,
+    handleToggleRotateScreen,
+    setNativeLandscapeLock,
+  ]);
 
   const handleSelectChannel = (ch: Channel) => {
     setActiveChannel(ch);
@@ -695,6 +793,10 @@ export default function App() {
     setAutoRotateBanner(false);
     setIsFloatingPiP(false);
     setIsFullscreenTV(true);
+    if (window.innerWidth < 768) {
+      setIsLandscapeRotated(true);
+      setNativeLandscapeLock(true);
+    }
     if (videoRef.current) {
       videoRef.current.muted = false;
       setIsMuted(false);
@@ -1055,14 +1157,19 @@ export default function App() {
           Press 'f' (or click the fullscreen video / press Escape) to toggle fullscreen.
           In Fullscreen mode (`isFullscreenTV === true`), ALL details, banners, and OSD overlays are hidden. */}
       <div
+        ref={videoStageRef}
         onClick={() => {
           if (isFullscreenTV) {
             setIsFullscreenTV(false);
+            setIsLandscapeRotated(false);
+            setNativeLandscapeLock(false);
           }
         }}
         className={
           isFullscreenTV
-            ? 'fixed inset-0 z-50 bg-black cursor-pointer'
+            ? isLandscapeRotated && isViewportPortrait
+              ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100dvh] h-[100dvw] rotate-90 z-50 bg-black cursor-pointer'
+              : 'fixed inset-0 z-50 bg-black cursor-pointer'
             : isFloatingPiP
               ? 'fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 w-[236px] sm:w-[360px] aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-black border-2 border-emerald-600 shadow-2xl flex flex-col justify-between transition-all duration-300'
               : 'relative mx-2.5 sm:mx-6 lg:mx-10 mt-2 sm:mt-3 rounded-2xl sm:rounded-3xl overflow-hidden bg-black border-2 border-emerald-500/40 shadow-2xl h-[45vh] sm:h-[62vh] lg:h-[74vh] min-h-[290px] sm:min-h-[420px] max-h-[860px] flex flex-col justify-between'
@@ -1166,6 +1273,14 @@ export default function App() {
               </button>
               <button
                 type="button"
+                onClick={handleToggleRotateScreen}
+                title="Rotate Screen to Landscape (R)"
+                className="p-1 sm:p-1.5 rounded-full bg-white/95 hover:bg-white text-black shadow transition-colors"
+              >
+                <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black" />
+              </button>
+              <button
+                type="button"
                 onClick={() => activeChannel && handleWatchFullscreen(activeChannel)}
                 title="Watch Fullscreen (F)"
                 className="p-1 sm:p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors"
@@ -1266,6 +1381,21 @@ export default function App() {
                   <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="sm:hidden">Fullscreen</span>
                   <span className="hidden sm:inline">Watch Fullscreen (F)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleToggleRotateScreen}
+                  title="Rotate Screen to Landscape (R)"
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0 ${
+                    isLandscapeRotated
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      : 'bg-white hover:bg-neutral-100 text-black'
+                  }`}
+                >
+                  <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="sm:hidden">Rotate</span>
+                  <span className="hidden sm:inline">Rotate Screen</span>
                 </button>
 
                 <button

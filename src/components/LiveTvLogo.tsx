@@ -3,11 +3,13 @@ import React from 'react';
 interface LiveTvLogoProps {
   size?: 'sm' | 'md' | 'lg';
   showTagline?: boolean;
+  variant?: 'light' | 'dark';
 }
 
 export const LiveTvLogo: React.FC<LiveTvLogoProps> = ({
   size = 'md',
   showTagline = false,
+  variant = 'light',
 }) => {
   const iconDimensions =
     size === 'sm'
@@ -115,7 +117,9 @@ export const LiveTvLogo: React.FC<LiveTvLogoProps> = ({
       <div className="flex flex-col leading-none">
         <div className="flex items-center gap-1.5">
           <span
-            className={`${titleClass} font-display font-bold tracking-tight text-black`}
+            className={`${titleClass} font-display font-bold tracking-tight ${
+              variant === 'dark' ? 'text-white' : 'text-black'
+            }`}
           >
             Live TV
           </span>
@@ -124,7 +128,11 @@ export const LiveTvLogo: React.FC<LiveTvLogoProps> = ({
           </span>
         </div>
         {showTagline && (
-          <span className="text-[10px] font-medium text-neutral-700 tracking-wide mt-0.5">
+          <span
+            className={`text-[10px] font-medium tracking-wide mt-0.5 ${
+              variant === 'dark' ? 'text-emerald-200/80' : 'text-neutral-700'
+            }`}
+          >
             India Live Broadcast
           </span>
         )}
