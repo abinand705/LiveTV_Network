@@ -1,0 +1,6 @@
+{
+  "summary":  "Comprehensive implementation plan for Doordarshan & Live Broadcast Studio (AetherCast India), a 3D Three.js interactive broadcast control room and live IPTV streaming platform parsing the India M3U playlist with HLS/DASH adaptive playback, XMLTV EPG parsing with smart realistic schedule fallback, multi-view/PiP support, and a collapsible floating EPG dock.",
+  "updatedAt":  "2026-10-31T12:59:21.879707965Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

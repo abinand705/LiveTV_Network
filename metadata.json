@@ -1,0 +1,6 @@
+{
+  "name": "AetherCast India — 3D Broadcast Studio & Live IPTV EPG",
+  "description": "Interactive 3D broadcast control room and searchable Electronic Program Guide (EPG) for live Indian television channels with adaptive HLS and MPEG-DASH streaming.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
