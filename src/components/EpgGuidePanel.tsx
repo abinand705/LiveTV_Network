@@ -93,8 +93,8 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
   return (
     <div className="flex flex-col h-full text-black select-none bg-white">
       {/* Search & Language Filter Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 border-b border-emerald-200 bg-emerald-50/60">
-        <div className="relative flex-1 min-w-[220px] max-w-md">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 px-3.5 sm:px-5 py-3 sm:py-3.5 border-b border-emerald-200 bg-emerald-50/60">
+        <div className="relative flex-1 w-full sm:max-w-md">
           <Search className="w-4 h-4 text-neutral-600 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
@@ -108,8 +108,8 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-white border border-emerald-300 rounded-lg px-3 py-1.5">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2">
+          <div className="flex items-center gap-1.5 bg-white border border-emerald-300 rounded-lg px-2.5 sm:px-3 py-1.5 flex-1 sm:flex-initial">
             <Globe className="w-3.5 h-3.5 text-black shrink-0" />
             <select
               value={selectedLanguage}
@@ -118,7 +118,7 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
                 setVisibleLimit(60);
               }}
               aria-label="Filter by language"
-              className="bg-transparent text-xs text-black font-medium focus:outline-none cursor-pointer"
+              className="w-full bg-transparent text-xs text-black font-medium focus:outline-none cursor-pointer"
             >
               {languages.map((lang) => (
                 <option key={lang} value={lang} className="bg-white text-black">
@@ -144,7 +144,7 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
       </div>
 
       {/* Category Filter Bar */}
-      <div className="flex items-center gap-1.5 px-5 py-2.5 border-b border-emerald-100 bg-white overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 border-b border-emerald-100 bg-white overflow-x-auto no-scrollbar">
         <Filter className="w-3.5 h-3.5 text-black mr-1 shrink-0" />
         {categories.map((cat) => {
           const active = selectedCategory === cat;
@@ -189,59 +189,75 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
             return (
               <div
                 key={channel.id}
-                className={`flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 px-5 py-3 transition-colors ${
+                className={`flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 px-3.5 sm:px-5 py-3 transition-colors ${
                   isSelected ? 'bg-emerald-50' : 'hover:bg-emerald-50/40'
                 }`}
               >
-                {/* Channel Info */}
-                <div className="flex items-center gap-3 min-w-[240px] lg:w-[280px] shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => onToggleFavorite(channel.id)}
-                    aria-label={`Favorite ${channel.name}`}
-                    className={`p-1 rounded transition-colors ${
-                      isFav ? 'text-emerald-600' : 'text-neutral-400 hover:text-black'
-                    }`}
-                  >
-                    <Star className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
-                  </button>
-
-                  <span className="text-xs font-mono-tabular text-neutral-700 w-9 shrink-0">
-                    {channel.number}
-                  </span>
-
-                  <div className="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center overflow-hidden shrink-0">
-                    {channel.logo ? (
-                      <img
-                        src={channel.logo}
-                        alt={channel.name}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-contain p-1"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <span className="text-xs font-display font-bold text-black">
-                        {channel.name.slice(0, 2).toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
+                {/* Top row on mobile: Channel Info + Watch Button */}
+                <div className="flex items-center justify-between gap-2 lg:w-[280px] shrink-0 min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <button
                       type="button"
-                      onClick={() => onSelectChannel(channel)}
-                      className="text-sm font-display font-semibold text-black hover:underline truncate text-left transition-colors block w-full"
+                      onClick={() => onToggleFavorite(channel.id)}
+                      aria-label={`Favorite ${channel.name}`}
+                      className={`p-1 rounded transition-colors shrink-0 ${
+                        isFav ? 'text-emerald-600' : 'text-neutral-400 hover:text-black'
+                      }`}
                     >
-                      {channel.name}
+                      <Star className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
                     </button>
-                    <div className="flex items-center gap-1.5 text-[11px] text-neutral-700 truncate">
-                      <span>{channel.language}</span>
-                      <span aria-hidden="true">·</span>
-                      <span>{channel.group}</span>
+
+                    <span className="text-xs font-mono-tabular text-neutral-700 w-7 sm:w-9 shrink-0">
+                      {channel.number}
+                    </span>
+
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center overflow-hidden shrink-0">
+                      {channel.logo ? (
+                        <img
+                          src={channel.logo}
+                          alt={channel.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-contain p-1"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <span className="text-xs font-display font-bold text-black">
+                          {channel.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <button
+                        type="button"
+                        onClick={() => onSelectChannel(channel)}
+                        className="text-xs sm:text-sm font-display font-semibold text-black hover:underline truncate text-left transition-colors block w-full"
+                      >
+                        {channel.name}
+                      </button>
+                      <div className="flex items-center gap-1.5 text-[11px] text-neutral-700 truncate">
+                        <span>{channel.language}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{channel.group}</span>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Mobile Watch Button */}
+                  <button
+                    type="button"
+                    onClick={() => onSelectChannel(channel)}
+                    className={`lg:hidden flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
+                      isSelected
+                        ? 'bg-emerald-700 text-white'
+                        : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                    }`}
+                  >
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>{isSelected ? 'Playing' : 'Watch'}</span>
+                  </button>
                 </div>
 
                 {/* Now & Next Programs */}
@@ -273,8 +289,8 @@ export const EpgGuidePanel: React.FC<EpgGuidePanelProps> = ({
                   </div>
                 </div>
 
-                {/* Watch Button */}
-                <div className="flex items-center gap-2 shrink-0">
+                {/* Desktop Watch Button */}
+                <div className="hidden lg:flex items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => onSelectChannel(channel)}

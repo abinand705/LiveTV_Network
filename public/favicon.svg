@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="ltv-bg" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="55%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+    <linearGradient id="ltv-screen" x1="14" y1="18" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
+      <stop offset="100%" stop-color="#d1fae5" stop-opacity="0.92" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Squircle Badge -->
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#ltv-bg)" />
+  <rect x="5" y="5" width="54" height="54" rx="15" stroke="#34d399" stroke-opacity="0.35" stroke-width="2" />
+
+  <!-- Broadcast Signal Waves / Antenna Arc -->
+  <path d="M23 11.5L32 18.5L41 11.5" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="32" cy="10.5" r="2.5" fill="#6ee7b7" />
+
+  <!-- Modern Widescreen TV Frame -->
+  <rect x="13" y="18" width="38" height="27" rx="6.5" fill="url(#ltv-screen)" />
+
+  <!-- Play Broadcast Prism Inside Screen -->
+  <path d="M28.5 25.5L39.5 31.5L28.5 37.5V25.5Z" fill="#059669" />
+
+  <!-- Live Pulse Dot -->
+  <circle cx="44.5" cy="23.5" r="2.5" fill="#10b981" />
+
+  <!-- Sleek Stand Base -->
+  <path d="M24 50H40" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+</svg>

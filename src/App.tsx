@@ -34,6 +34,7 @@ import {
 import { getNowAndNext, parseXMLTVDocument } from './services/epgService';
 import { AdaptiveStreamController } from './services/streamController';
 import { EpgGuidePanel } from './components/EpgGuidePanel';
+import { LiveTvLogo } from './components/LiveTvLogo';
 
 const FAVORITES_STORAGE_KEY = 'livetv_network_favorites_v1';
 const BANNER_INTERVAL_MS = 8000;
@@ -88,21 +89,21 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
   };
 
   return (
-    <div className="space-y-2.5 group/row">
+    <div className="space-y-2 sm:space-y-2.5 group/row">
       {/* Row Header */}
-      <div className="flex items-center justify-between px-6 sm:px-10">
-        <div className="flex items-baseline gap-3">
-          <h3 className="text-lg sm:text-xl font-display font-bold text-black tracking-tight">
+      <div className="flex items-center justify-between px-3.5 sm:px-6 lg:px-10">
+        <div className="flex items-baseline gap-2 sm:gap-3 min-w-0">
+          <h3 className="text-base sm:text-xl font-display font-bold text-black tracking-tight truncate">
             {title}
           </h3>
           {subtitle && (
-            <span className="text-xs text-neutral-700 font-mono-tabular">
+            <span className="text-[11px] sm:text-xs text-neutral-700 font-mono-tabular shrink-0">
               {subtitle}
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 opacity-85 group-hover/row:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1.5 opacity-90 group-hover/row:opacity-100 transition-opacity shrink-0">
           <button
             type="button"
             onClick={() => scrollRow(-1)}
@@ -125,7 +126,7 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
       {/* Horizontal 16:9 Android TV Cards Rail */}
       <div
         ref={rowRef}
-        className="flex items-stretch gap-4 overflow-x-auto no-scrollbar px-6 sm:px-10 py-3 scroll-smooth"
+        className="flex items-stretch gap-3 sm:gap-4 overflow-x-auto no-scrollbar px-3.5 sm:px-6 lg:px-10 py-2.5 sm:py-3 scroll-smooth"
       >
         {channels.slice(0, 40).map((ch) => {
           const isCurrent = activeChannel?.id === ch.id;
@@ -141,15 +142,15 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter') onSelectChannel(ch);
               }}
-              className={`group relative w-[240px] sm:w-[268px] shrink-0 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 ease-out select-none outline-none hover:scale-[1.05] focus-visible:scale-[1.05] ${
+              className={`group relative w-[196px] sm:w-[252px] lg:w-[268px] shrink-0 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 ease-out select-none outline-none sm:hover:scale-[1.04] focus-visible:scale-[1.04] ${
                 isCurrent
                   ? 'bg-white ring-2 ring-emerald-600 shadow-xl'
                   : 'bg-white hover:bg-emerald-50/50 ring-1 ring-emerald-200 hover:ring-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-600 shadow-sm'
               }`}
             >
               {/* Top 16:9 Tile Preview Surface */}
-              <div className="relative h-32 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/70 flex items-center justify-center p-4">
-                <div className="absolute top-2.5 left-3 flex items-center gap-1.5 text-[11px] text-neutral-700 font-mono-tabular">
+              <div className="relative h-28 sm:h-32 bg-gradient-to-br from-emerald-50 via-white to-emerald-100/70 flex items-center justify-center p-3 sm:p-4">
+                <div className="absolute top-2 left-2.5 sm:top-2.5 sm:left-3 flex items-center gap-1 text-[10px] sm:text-[11px] text-neutral-700 font-mono-tabular">
                   <span>CH {ch.number}</span>
                   <span aria-hidden="true">·</span>
                   <span className="text-black font-semibold font-sans">{ch.language}</span>
@@ -159,10 +160,10 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
                   type="button"
                   onClick={(e) => onToggleFavorite(ch.id, e)}
                   aria-label={`Favorite ${ch.name}`}
-                  className={`absolute top-2 right-2.5 p-1.5 rounded-full transition-colors ${
+                  className={`absolute top-2 right-2 p-1.5 rounded-full transition-colors ${
                     isFav
                       ? 'text-emerald-600 bg-white shadow-sm'
-                      : 'text-neutral-500 hover:text-black bg-white/80 opacity-0 group-hover:opacity-100'
+                      : 'text-neutral-500 hover:text-black bg-white/80 opacity-100 sm:opacity-0 sm:group-hover:opacity-100'
                   }`}
                 >
                   <Star className={`w-3.5 h-3.5 ${isFav ? 'fill-current' : ''}`} />
@@ -173,14 +174,14 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
                     src={ch.logo}
                     alt={ch.name}
                     referrerPolicy="no-referrer"
-                    className="max-h-14 max-w-[140px] object-contain transition-transform duration-200 group-hover:scale-105"
+                    className="max-h-12 sm:max-h-14 max-w-[120px] sm:max-w-[140px] object-contain transition-transform duration-200 group-hover:scale-105"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).style.display = 'none';
                     }}
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
-                    <span className="text-base font-display font-bold">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+                    <span className="text-sm sm:text-base font-display font-bold">
                       {ch.name.slice(0, 2).toUpperCase()}
                     </span>
                   </div>
@@ -193,9 +194,9 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
                     onWatchFullscreen(ch);
                   }}
                   title="Watch Fullscreen TV (F)"
-                  className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[11px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shadow-sm"
+                  className="absolute bottom-2 right-2 sm:bottom-2.5 sm:right-2.5 px-2 sm:px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[10px] sm:text-[11px] font-semibold opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1 shadow-sm"
                 >
-                  <Play className="w-3 h-3 fill-current" />
+                  <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
                   <span>Full TV</span>
                 </button>
 
@@ -207,16 +208,16 @@ const HorizontalSwimlane: React.FC<HorizontalSwimlaneProps> = ({
                 </div>
               </div>
 
-              <div className="p-3 space-y-1 bg-white">
+              <div className="p-2.5 sm:p-3 space-y-1 bg-white">
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-display font-semibold text-black truncate">
+                  <h4 className="text-xs sm:text-sm font-display font-semibold text-black truncate">
                     {ch.name}
                   </h4>
                   <span className="text-[10px] font-mono-tabular uppercase text-black font-semibold shrink-0">
                     {ch.mirrors[0]?.format || 'HLS'}
                   </span>
                 </div>
-                <p className="text-xs text-neutral-700 truncate">{current.title}</p>
+                <p className="text-[11px] sm:text-xs text-neutral-700 truncate">{current.title}</p>
               </div>
             </div>
           );
@@ -784,32 +785,30 @@ export default function App() {
   // ---------------------------------------------------------------------------
   if (!hasChosenLanguage) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-100 via-white to-emerald-50 text-black flex flex-col justify-between p-6 sm:p-12 select-none">
-        <div className="flex items-center justify-between max-w-6xl w-full mx-auto">
-          <span className="text-xl font-display font-bold tracking-tight text-black">
-            Live TV Network
-          </span>
-          <span className="text-xs font-semibold text-neutral-700">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-100 via-white to-emerald-50 text-black flex flex-col justify-between p-4 sm:p-8 lg:p-12 select-none">
+        <div className="flex flex-wrap items-center justify-between gap-2 max-w-6xl w-full mx-auto">
+          <LiveTvLogo size="md" showTagline />
+          <span className="text-[11px] sm:text-xs font-semibold text-neutral-700">
             {loading
               ? 'Loading India Live Channels...'
               : `${channels.length} Live Channels Ready`}
           </span>
         </div>
 
-        <div className="max-w-5xl w-full mx-auto my-auto py-8 space-y-8">
-          <div className="space-y-2 text-center sm:text-left">
-            <p className="text-xs font-bold uppercase tracking-widest text-black">
+        <div className="max-w-5xl w-full mx-auto my-auto py-5 sm:py-8 space-y-6 sm:space-y-8">
+          <div className="space-y-1.5 sm:space-y-2 text-center sm:text-left">
+            <p className="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-black">
               Step 1 · Personalize Live TV Network
             </p>
-            <h1 className="text-3xl sm:text-5xl font-display font-bold text-black tracking-tight">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-display font-bold text-black tracking-tight">
               Choose Your Preferred Languages
             </h1>
-            <p className="text-sm sm:text-base text-neutral-700 max-w-2xl">
+            <p className="text-xs sm:text-base text-neutral-700 max-w-2xl">
               Select one or multiple languages below, then click <strong>Continue</strong> to enter and watch live channels tailored to your selection.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3.5">
             {RECOMMENDED_LANGUAGES.map((item) => {
               const count = languageCounts[item.id] ?? 0;
               const isSelected = selectedLanguages.includes(item.id);
@@ -818,17 +817,17 @@ export default function App() {
                   key={item.id}
                   type="button"
                   onClick={() => handleToggleLanguageSelection(item.id)}
-                  className={`group relative rounded-2xl p-4 text-left transition-all duration-200 outline-none hover:scale-[1.03] focus-visible:scale-[1.03] border ${
+                  className={`group relative rounded-2xl p-3 sm:p-4 text-left transition-all duration-200 outline-none sm:hover:scale-[1.03] focus-visible:scale-[1.03] border ${
                     isSelected
                       ? 'bg-emerald-600 text-white border-emerald-700 shadow-xl ring-2 ring-emerald-600'
                       : 'bg-white hover:bg-emerald-50 text-black border-emerald-300 hover:border-emerald-500 shadow-sm'
                   }`}
                 >
-                  <div className="flex items-center justify-between text-[11px] font-semibold">
-                    <span className={isSelected ? 'text-white' : 'text-neutral-700'}>
+                  <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-semibold gap-1">
+                    <span className={`truncate ${isSelected ? 'text-white' : 'text-neutral-700'}`}>
                       {item.tag}
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1 shrink-0">
                       {!loading && (
                         <span
                           className={`font-mono-tabular ${
@@ -850,16 +849,16 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="mt-3">
+                  <div className="mt-2 sm:mt-3">
                     <div
-                      className={`text-lg font-display font-bold ${
+                      className={`text-base sm:text-lg font-display font-bold truncate ${
                         isSelected ? 'text-white' : 'text-black'
                       }`}
                     >
                       {item.label}
                     </div>
                     <div
-                      className={`text-xs mt-0.5 ${
+                      className={`text-xs mt-0.5 truncate ${
                         isSelected ? 'text-white/90' : 'text-neutral-600'
                       }`}
                     >
@@ -871,8 +870,8 @@ export default function App() {
             })}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-emerald-200">
-            <div className="text-xs sm:text-sm font-medium text-black">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pt-4 sm:pt-5 border-t border-emerald-200">
+            <div className="text-xs sm:text-sm font-medium text-black text-center sm:text-left">
               {selectedLanguages.length === 0 ? (
                 <span className="text-red-600">Please select at least one language to continue.</span>
               ) : (
@@ -886,7 +885,7 @@ export default function App() {
               type="button"
               disabled={(loading && channels.length === 0) || selectedLanguages.length === 0}
               onClick={handleConfirmLanguagesAndContinue}
-              className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:pointer-events-none text-white text-sm font-semibold transition-colors shadow-lg cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:pointer-events-none text-white text-sm font-semibold transition-colors shadow-lg cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>
@@ -898,7 +897,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="max-w-6xl w-full mx-auto text-xs text-neutral-600">
+        <div className="max-w-6xl w-full mx-auto text-[11px] sm:text-xs text-neutral-600 text-center sm:text-left">
           Live TV Network · HLS & MPEG-DASH Broadcast Directory
         </div>
       </div>
@@ -909,11 +908,11 @@ export default function App() {
   // STEP 2: ANDROID TV MAIN INTERFACE
   // ---------------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-100/70 via-white to-emerald-50 text-black select-none">
-      {/* ANDROID TV TOP LAUNCHER BAR — 50% transparent background */}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-100/70 via-white to-emerald-50 text-black select-none overflow-x-hidden">
+      {/* ANDROID TV TOP LAUNCHER BAR — 50% transparent background, mobile responsive */}
       {!isFullscreenTV && (
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-8 px-6 sm:px-10 py-4 bg-gradient-to-r from-emerald-100/50 via-white/50 to-emerald-50/50 backdrop-blur-md min-h-[68px]">
-          {/* Zone 1: Brand Wordmark */}
+        <header className="sticky top-0 z-30 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-4 gap-y-2.5 md:gap-8 px-3.5 sm:px-6 lg:px-10 py-2.5 sm:py-3.5 bg-gradient-to-r from-emerald-100/50 via-white/50 to-emerald-50/50 backdrop-blur-md min-h-[60px] sm:min-h-[68px]">
+          {/* Zone 1: Brand Logo & Wordmark */}
           <a
             href="#tv-home"
             onClick={(e) => {
@@ -923,13 +922,13 @@ export default function App() {
               setIsFullscreenTV(false);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="text-xl font-display font-bold tracking-tight text-black whitespace-nowrap shrink-0"
+            className="whitespace-nowrap shrink-0"
           >
-            Live TV Network
+            <LiveTvLogo size="md" />
           </a>
 
           {/* Zone 2: Center Navigation / In-Place Running Search Bar */}
-          <div className="flex-1 flex items-center justify-center">
+          <div className="order-3 md:order-2 w-full md:w-auto md:flex-1 flex items-center justify-start md:justify-center">
             <div className="w-full max-w-xl flex items-center justify-start">
               {searchMode !== 'closed' ? (
                 /* Search bar expands directly from the left spot where the Search button sits */
@@ -942,7 +941,7 @@ export default function App() {
                   }`}
                 >
                   <div className="relative w-full">
-                    <Search className="w-4 h-4 text-black absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Search className="w-4 h-4 text-black absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <input
                       ref={searchInputRef}
                       type="text"
@@ -952,7 +951,7 @@ export default function App() {
                         if (e.key === 'Escape') closeSearchBar();
                       }}
                       placeholder={`Search ${filteredChannels.length} live channels...`}
-                      className="w-full pl-11 pr-10 py-2 text-sm rounded-full bg-white/95 border-2 border-emerald-600 text-black placeholder-neutral-500 focus:outline-none shadow-md"
+                      className="w-full pl-10 sm:pl-11 pr-9 sm:pr-10 py-1.5 sm:py-2 text-xs sm:text-sm rounded-full bg-white/95 border-2 border-emerald-600 text-black placeholder-neutral-500 focus:outline-none shadow-md"
                     />
                     {searchQuery && (
                       <button
@@ -961,7 +960,7 @@ export default function App() {
                           setSearchQuery('');
                           searchInputRef.current?.focus();
                         }}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-neutral-600 hover:text-black"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-neutral-600 hover:text-black"
                         aria-label="Clear search"
                       >
                         <X className="w-4 h-4" />
@@ -970,13 +969,13 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                <nav className="flex items-center gap-6 text-sm font-medium text-neutral-800">
+                <nav className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium text-neutral-800 overflow-x-auto no-scrollbar w-full py-0.5">
                   <button
                     type="button"
                     onClick={openSearchBar}
                     className="flex items-center gap-1.5 hover:text-black transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                   >
-                    <Search className="w-4 h-4" />
+                    <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     <span>Search</span>
                   </button>
                   <button
@@ -1034,16 +1033,17 @@ export default function App() {
           </div>
 
           {/* Zone 3: 1 Primary Action (Hidden when Search is open) */}
-          <div className="flex items-center gap-3 shrink-0 min-w-[140px] justify-end">
+          <div className="order-2 md:order-3 flex items-center gap-2 sm:gap-3 shrink-0 md:min-w-[140px] justify-end">
             {searchMode === 'closed' && (
               <button
                 type="button"
                 onClick={() => setHasChosenLanguage(false)}
-                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-full transition-colors whitespace-nowrap shrink-0 shadow-sm"
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-full transition-colors whitespace-nowrap shrink-0 shadow-sm"
               >
-                <Globe className="w-3.5 h-3.5" />
-                <span className="truncate max-w-[180px]">
-                  Languages: {selectedLanguagesSummary}
+                <Globe className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate max-w-[130px] sm:max-w-[180px]">
+                  <span className="hidden sm:inline">Languages: </span>
+                  {selectedLanguagesSummary}
                 </span>
               </button>
             )}
@@ -1064,8 +1064,8 @@ export default function App() {
           isFullscreenTV
             ? 'fixed inset-0 z-50 bg-black cursor-pointer'
             : isFloatingPiP
-              ? 'fixed bottom-5 right-5 z-40 w-[300px] sm:w-[360px] aspect-video rounded-2xl overflow-hidden bg-black border-2 border-emerald-600 shadow-2xl flex flex-col justify-between transition-all duration-300'
-              : 'relative mx-4 sm:mx-10 mt-3 rounded-3xl overflow-hidden bg-black border-2 border-emerald-500/40 shadow-2xl h-[58vh] sm:h-[66vh] lg:h-[74vh] min-h-[440px] max-h-[860px] flex flex-col justify-between'
+              ? 'fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 w-[236px] sm:w-[360px] aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-black border-2 border-emerald-600 shadow-2xl flex flex-col justify-between transition-all duration-300'
+              : 'relative mx-2.5 sm:mx-6 lg:mx-10 mt-2 sm:mt-3 rounded-2xl sm:rounded-3xl overflow-hidden bg-black border-2 border-emerald-500/40 shadow-2xl h-[45vh] sm:h-[62vh] lg:h-[74vh] min-h-[290px] sm:min-h-[420px] max-h-[860px] flex flex-col justify-between'
         }
       >
         {/* Full-Width Unobstructed Video Element */}
@@ -1080,12 +1080,12 @@ export default function App() {
 
           {/* Native Picture-in-Picture Active Status Banner inside Main Stage */}
           {!isFullscreenTV && isPiP && (
-            <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center p-6 text-center z-10 pointer-events-none">
-              <PictureInPicture2 className="w-9 h-9 text-emerald-400 mb-2" />
-              <p className="text-sm sm:text-base font-display font-bold text-white">
+            <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-10 pointer-events-none">
+              <PictureInPicture2 className="w-7 h-7 sm:w-9 sm:h-9 text-emerald-400 mb-2" />
+              <p className="text-xs sm:text-base font-display font-bold text-white">
                 Playing in Picture-in-Picture
               </p>
-              <p className="text-xs text-white/80 mt-1 max-w-sm">
+              <p className="text-[11px] sm:text-xs text-white/80 mt-1 max-w-sm">
                 Browse channels below — selecting any channel switches the live stream directly inside your Picture-in-Picture window.
               </p>
             </div>
@@ -1093,24 +1093,24 @@ export default function App() {
 
           {/* Subtle Bottom Scrim ONLY when NOT in Fullscreen */}
           {!isFullscreenTV && (
-            <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/85 via-black/40 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 h-36 sm:h-44 bg-gradient-to-t from-black/85 via-black/40 to-transparent pointer-events-none" />
           )}
 
           {/* Offline / Geo-Blocked Stream Recovery Overlay (Only shown when not in clean fullscreen) */}
           {!isFullscreenTV && telemetry.status === 'error' && (
-            <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20">
-              <AlertCircle className="w-8 h-8 text-emerald-400 mb-2" />
-              <p className="text-sm font-medium text-white max-w-md">
+            <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
+              <AlertCircle className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-400 mb-1.5 sm:mb-2" />
+              <p className="text-xs sm:text-sm font-medium text-white max-w-md">
                 {telemetry.errorMessage || 'Channel stream is currently offline or geo-restricted.'}
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-2.5 mt-4">
+              <div className="flex flex-wrap items-center justify-center gap-2 mt-3 sm:mt-4">
                 {activeChannel && activeChannel.mirrors.length > 1 && (
                   <button
                     type="button"
                     onClick={() =>
                       setActiveMirrorIndex((prev) => (prev + 1) % activeChannel.mirrors.length)
                     }
-                    className="px-4 py-2 text-xs font-semibold rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full bg-white/15 hover:bg-white/25 text-white transition-colors"
                   >
                     Switch Feed ({activeMirrorIndex + 1}/{activeChannel.mirrors.length})
                   </button>
@@ -1118,14 +1118,14 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => handleLoadBackupStream('hls')}
-                  className="px-4 py-2 text-xs font-semibold rounded-full bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
                 >
                   Play Verified HLS Stream
                 </button>
                 <button
                   type="button"
                   onClick={() => handleLoadBackupStream('dash')}
-                  className="px-4 py-2 text-xs font-semibold rounded-full bg-white hover:bg-neutral-100 text-black transition-colors"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold rounded-full bg-white hover:bg-neutral-100 text-black transition-colors"
                 >
                   Play Verified DASH Stream
                 </button>
@@ -1136,9 +1136,9 @@ export default function App() {
 
         {/* COMPACT FLOATING CORNER CONTROLS (Used if browser/iframe falls back to in-app corner PiP) */}
         {!isFullscreenTV && isFloatingPiP && (
-          <div className="relative z-10 w-full h-full flex flex-col justify-between p-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-white/95 text-black font-mono-tabular font-bold text-[11px] truncate shadow">
+          <div className="relative z-10 w-full h-full flex flex-col justify-between p-2 sm:p-3">
+            <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+              <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white/95 text-black font-mono-tabular font-bold text-[10px] sm:text-[11px] truncate shadow">
                 CH {activeChannel?.number || 100} · {activeChannel?.name}
               </span>
               <button
@@ -1146,9 +1146,9 @@ export default function App() {
                 onClick={handleTogglePiP}
                 title="Exit Picture-in-Picture"
                 aria-label="Exit Picture-in-Picture"
-                className="p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors"
+                className="p-1 sm:p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors shrink-0"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             </div>
             <div className="flex items-center justify-end gap-1.5">
@@ -1156,21 +1156,21 @@ export default function App() {
                 type="button"
                 onClick={handleToggleMute}
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-                className="p-1.5 rounded-full bg-white/95 hover:bg-white text-black shadow transition-colors"
+                className="p-1 sm:p-1.5 rounded-full bg-white/95 hover:bg-white text-black shadow transition-colors"
               >
                 {isMuted ? (
-                  <VolumeX className="w-3.5 h-3.5 text-black" />
+                  <VolumeX className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black" />
                 ) : (
-                  <Volume2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <Volume2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600" />
                 )}
               </button>
               <button
                 type="button"
                 onClick={() => activeChannel && handleWatchFullscreen(activeChannel)}
                 title="Watch Fullscreen (F)"
-                className="p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors"
+                className="p-1 sm:p-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow transition-colors"
               >
-                <Maximize2 className="w-3.5 h-3.5" />
+                <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             </div>
           </div>
@@ -1180,22 +1180,28 @@ export default function App() {
         {!isFullscreenTV && !isFloatingPiP && (
           <>
             {/* Top Bar Inside Banner: Channel Badge & Auto-Switch Controls */}
-            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 p-4 sm:p-6">
-              <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/95 text-black shadow-md">
-                <span className="font-mono-tabular font-bold text-xs">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-2 sm:gap-3 p-3 sm:p-6">
+              <div className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white/95 text-black shadow-md max-w-full">
+                <span className="font-mono-tabular font-bold text-[11px] sm:text-xs whitespace-nowrap">
                   LIVE · CH {activeChannel?.number || 100}
                 </span>
                 <span aria-hidden="true">·</span>
-                <span className="text-xs font-semibold">{activeChannel?.language || 'India'}</span>
-                <span aria-hidden="true">·</span>
-                <span className="text-xs text-neutral-700">{activeChannel?.group || 'TV'}</span>
+                <span className="text-[11px] sm:text-xs font-semibold truncate">
+                  {activeChannel?.language || 'India'}
+                </span>
+                <span className="hidden xs:inline" aria-hidden="true">
+                  ·
+                </span>
+                <span className="hidden xs:inline text-[11px] sm:text-xs text-neutral-700 truncate">
+                  {activeChannel?.group || 'TV'}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   type="button"
                   onClick={() => setAutoRotateBanner((prev) => !prev)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors shadow-md ${
+                  className={`px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-semibold transition-colors shadow-md whitespace-nowrap ${
                     autoRotateBanner
                       ? 'bg-emerald-600 text-white'
                       : 'bg-white/95 text-black hover:bg-white'
@@ -1207,26 +1213,26 @@ export default function App() {
                   type="button"
                   onClick={() => handleBannerStep(-1)}
                   aria-label="Previous spotlight channel"
-                  className="p-2 rounded-full bg-white/95 hover:bg-emerald-600 text-black hover:text-white shadow-md transition-colors"
+                  className="p-1.5 sm:p-2 rounded-full bg-white/95 hover:bg-emerald-600 text-black hover:text-white shadow-md transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
                 <button
                   type="button"
                   onClick={() => handleBannerStep(1)}
                   aria-label="Next spotlight channel"
-                  className="p-2 rounded-full bg-white/95 hover:bg-emerald-600 text-black hover:text-white shadow-md transition-colors"
+                  className="p-1.5 sm:p-2 rounded-full bg-white/95 hover:bg-emerald-600 text-black hover:text-white shadow-md transition-colors"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
 
             {/* Bottom Compact Dock Inside Banner: Channel Info & Action Controls */}
-            <div className="relative z-10 w-full p-5 sm:p-8 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-4">
-              <div className="flex items-center gap-4 min-w-0">
+            <div className="relative z-10 w-full p-3.5 sm:p-6 lg:p-8 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-3 sm:gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 max-w-full">
                 {activeChannel?.logo && (
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white p-2 flex items-center justify-center shrink-0 shadow-lg">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white p-1.5 sm:p-2 flex items-center justify-center shrink-0 shadow-lg">
                     <img
                       src={activeChannel.logo}
                       alt={activeChannel.name}
@@ -1239,11 +1245,11 @@ export default function App() {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <h1 className="text-xl sm:text-3xl font-display font-bold text-white tracking-tight truncate drop-shadow">
+                  <h1 className="text-base sm:text-2xl lg:text-3xl font-display font-bold text-white tracking-tight truncate drop-shadow">
                     {activeChannel?.name || 'Loading Live Television...'}
                   </h1>
                   {activeEpg && (
-                    <p className="text-xs sm:text-sm text-white/90 truncate mt-0.5 drop-shadow">
+                    <p className="text-[11px] sm:text-sm text-white/90 truncate mt-0.5 drop-shadow">
                       Now Playing: <strong>{activeEpg.current.title}</strong>
                     </p>
                   )}
@@ -1251,44 +1257,50 @@ export default function App() {
               </div>
 
               {/* Action Controls & Slide Indicators */}
-              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5 w-full lg:w-auto shrink-0">
                 <button
                   type="button"
                   onClick={() => activeChannel && handleWatchFullscreen(activeChannel)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0"
                 >
-                  <Maximize2 className="w-4 h-4" />
-                  <span>Watch Fullscreen (F)</span>
+                  <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="sm:hidden">Fullscreen</span>
+                  <span className="hidden sm:inline">Watch Fullscreen (F)</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleTogglePiP}
                   title="Toggle Picture-in-Picture mode"
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0 ${
                     isPiP || isFloatingPiP
                       ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
                       : 'bg-white hover:bg-neutral-100 text-black'
                   }`}
                 >
-                  <PictureInPicture2 className="w-4 h-4" />
-                  <span>{isPiP || isFloatingPiP ? 'Exit PiP' : 'Picture-in-Picture'}</span>
+                  <PictureInPicture2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="sm:hidden">{isPiP || isFloatingPiP ? 'Exit PiP' : 'PiP'}</span>
+                  <span className="hidden sm:inline">
+                    {isPiP || isFloatingPiP ? 'Exit PiP' : 'Picture-in-Picture'}
+                  </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleToggleMute}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-neutral-100 text-black text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white hover:bg-neutral-100 text-black text-xs sm:text-sm font-semibold transition-colors shadow-lg whitespace-nowrap shrink-0"
                 >
                   {isMuted ? (
                     <>
-                      <VolumeX className="w-4 h-4 text-black" />
-                      <span>Unmute Audio</span>
+                      <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black" />
+                      <span className="sm:hidden">Unmute</span>
+                      <span className="hidden sm:inline">Unmute Audio</span>
                     </>
                   ) : (
                     <>
-                      <Volume2 className="w-4 h-4 text-emerald-600" />
-                      <span>Mute Audio</span>
+                      <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600" />
+                      <span className="sm:hidden">Mute</span>
+                      <span className="hidden sm:inline">Mute Audio</span>
                     </>
                   )}
                 </button>
@@ -1297,14 +1309,14 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => handleToggleFavorite(activeChannel.id)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 shadow-lg ${
+                    className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 shadow-lg ${
                       favorites.includes(activeChannel.id)
                         ? 'bg-emerald-600 text-white'
                         : 'bg-white hover:bg-neutral-100 text-black'
                     }`}
                   >
                     <Star
-                      className={`w-4 h-4 ${
+                      className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
                         favorites.includes(activeChannel.id) ? 'fill-current' : ''
                       }`}
                     />
@@ -1323,15 +1335,15 @@ export default function App() {
                       if (m) streamControllerRef.current?.loadStream(m.url, m.format, false);
                     }
                   }}
-                  className="p-2 rounded-full bg-white hover:bg-neutral-100 text-black shadow-lg transition-colors"
+                  className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-neutral-100 text-black shadow-lg transition-colors shrink-0"
                   title="Reload Stream"
                   aria-label="Reload Stream"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
 
                 {/* Slide Indicators */}
-                <div className="flex items-center gap-1.5 bg-white/95 px-3 py-2 rounded-full shadow-lg">
+                <div className="hidden sm:flex items-center gap-1.5 bg-white/95 px-3 py-2 rounded-full shadow-lg">
                   {bannerChannels.map((bCh, idx) => {
                     const isCurrent = idx === bannerIndex;
                     return (
@@ -1367,9 +1379,9 @@ export default function App() {
 
       {/* MAIN ANDROID TV CONTENT AREA BELOW HERO — Hidden when watching in Fullscreen */}
       {!isFullscreenTV && (
-        <main className="py-8 space-y-8">
+        <main className="py-5 sm:py-8 space-y-6 sm:space-y-8">
           {activeNavTab === 'epg' ? (
-            <div className="mx-6 sm:mx-10 rounded-2xl bg-white border border-emerald-200 shadow-lg overflow-hidden h-[70vh] min-h-[520px]">
+            <div className="mx-2.5 sm:mx-6 lg:mx-10 rounded-2xl bg-white border border-emerald-200 shadow-lg overflow-hidden h-[75vh] min-h-[420px] sm:min-h-[520px]">
               <EpgGuidePanel
                 channels={channels}
                 activeChannel={activeChannel}
@@ -1400,17 +1412,17 @@ export default function App() {
           ) : (
             <>
               {/* ANDROID TV MULTI-SELECT LANGUAGE RAIL */}
-              <section className="space-y-2.5">
-                <div className="px-6 sm:px-10 flex items-center justify-between">
-                  <h2 className="text-sm font-bold text-black">
-                    Languages (Tap to toggle multiple languages)
+              <section className="space-y-2 sm:space-y-2.5">
+                <div className="px-3.5 sm:px-6 lg:px-10 flex flex-wrap items-center justify-between gap-2">
+                  <h2 className="text-xs sm:text-sm font-bold text-black">
+                    Languages (Tap to toggle multiple)
                   </h2>
-                  <span className="text-xs font-mono-tabular text-neutral-700">
+                  <span className="text-[11px] sm:text-xs font-mono-tabular text-neutral-700">
                     {filteredChannels.length} channels available
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar px-6 sm:px-10 py-1">
+                <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar px-3.5 sm:px-6 lg:px-10 py-1">
                   {languages.map((lang) => {
                     const active = selectedLanguages.includes(lang);
                     const count = languageCounts[lang] || 0;
@@ -1429,7 +1441,7 @@ export default function App() {
                             return [...withoutAll, lang];
                           });
                         }}
-                        className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap shrink-0 border ${
+                        className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap shrink-0 border ${
                           active
                             ? 'bg-emerald-600 text-white border-emerald-600 font-semibold shadow-md scale-[1.03]'
                             : 'bg-white text-black hover:bg-emerald-50 border-emerald-200 shadow-xs'
@@ -1437,7 +1449,7 @@ export default function App() {
                       >
                         <span>{lang === 'All' ? 'All Languages' : lang}</span>
                         <span
-                          className={`ml-1.5 text-xs font-mono-tabular ${
+                          className={`ml-1.5 text-[11px] sm:text-xs font-mono-tabular ${
                             active ? 'text-white/90' : 'text-neutral-600'
                           }`}
                         >
@@ -1451,15 +1463,15 @@ export default function App() {
 
               {/* CATEGORIZED ANDROID TV HORIZONTAL SWIMLANES */}
               {loading ? (
-                <div className="py-20 text-center space-y-3">
+                <div className="py-16 sm:py-20 text-center space-y-3">
                   <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <p className="text-sm text-black">
+                  <p className="text-xs sm:text-sm text-black">
                     Loading live Indian TV channels...
                   </p>
                 </div>
               ) : error ? (
-                <div className="mx-6 sm:mx-10 rounded-2xl bg-white border border-emerald-300 p-8 text-center space-y-3 shadow-sm">
-                  <p className="text-sm text-black">{error}</p>
+                <div className="mx-3.5 sm:mx-10 rounded-2xl bg-white border border-emerald-300 p-6 sm:p-8 text-center space-y-3 shadow-sm">
+                  <p className="text-xs sm:text-sm text-black">{error}</p>
                   <button
                     type="button"
                     onClick={loadPlaylist}
@@ -1469,9 +1481,9 @@ export default function App() {
                   </button>
                 </div>
               ) : channelsByCategory.length === 0 ? (
-                <div className="mx-6 sm:mx-10 rounded-2xl bg-white border border-emerald-200 py-16 text-center space-y-2 shadow-sm">
+                <div className="mx-3.5 sm:mx-10 rounded-2xl bg-white border border-emerald-200 py-14 sm:py-16 text-center space-y-2 shadow-sm">
                   <Tv className="w-8 h-8 text-neutral-400 mx-auto" />
-                  <p className="text-sm font-medium text-black">
+                  <p className="text-xs sm:text-sm font-medium text-black">
                     No channels match your current filter
                   </p>
                   <button
@@ -1487,7 +1499,7 @@ export default function App() {
                   </button>
                 </div>
               ) : (
-                <section className="space-y-6">
+                <section className="space-y-5 sm:space-y-6">
                   {channelsByCategory.map(([categoryName, categoryChannels]) => (
                     <HorizontalSwimlane
                       key={categoryName}
