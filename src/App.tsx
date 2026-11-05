@@ -36,8 +36,11 @@ import { getNowAndNext, parseXMLTVDocument } from './services/epgService';
 import { AdaptiveStreamController } from './services/streamController';
 import { EpgGuidePanel } from './components/EpgGuidePanel';
 import { LiveTvLogo } from './components/LiveTvLogo';
+import { Footer } from './components/Footer';
 
 const FAVORITES_STORAGE_KEY = 'livetv_network_favorites_v1';
+const LANGUAGE_ONBOARDING_KEY = 'livetv_network_language_chosen_v1';
+const SELECTED_LANGUAGES_KEY = 'livetv_network_selected_languages_v1';
 const BANNER_INTERVAL_MS = 8000;
 
 const RECOMMENDED_LANGUAGES = [
@@ -237,9 +240,29 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [xmltvMap, setXmltvMap] = useState<Map<string, ProgramSlot[]>>(new Map());
 
-  // Multi-Language Onboarding Gate
-  const [hasChosenLanguage, setHasChosenLanguage] = useState<boolean>(false);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['Hindi']);
+  // Multi-Language Onboarding Gate & Persisted Preferred Languages
+  const [hasChosenLanguage, setHasChosenLanguage] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(LANGUAGE_ONBOARDING_KEY);
+      return saved === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(SELECTED_LANGUAGES_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {
+      // fallback
+    }
+    return ['Hindi'];
+  });
 
   // Active Channel & Auto-Rotating Hero Banner State
   const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
@@ -563,10 +586,16 @@ export default function App() {
     });
   };
 
-  // Confirm language selection and enter ONLY when clicking Continue
+  // Confirm language selection, persist to local storage, and enter
   const handleConfirmLanguagesAndContinue = () => {
     if (selectedLanguages.length === 0) return;
     setHasChosenLanguage(true);
+    try {
+      localStorage.setItem(LANGUAGE_ONBOARDING_KEY, 'true');
+      localStorage.setItem(SELECTED_LANGUAGES_KEY, JSON.stringify(selectedLanguages));
+    } catch (e) {
+      console.error('Failed to save language preferences:', e);
+    }
     setBannerIndex(0);
     setBannerProgress(0);
     setAutoRotateBanner(true);
@@ -583,6 +612,18 @@ export default function App() {
       setActiveMirrorIndex(0);
     }
   };
+
+  // Automatically sync preferred languages to localStorage whenever toggled
+  useEffect(() => {
+    if (hasChosenLanguage && selectedLanguages.length > 0) {
+      try {
+        localStorage.setItem(SELECTED_LANGUAGES_KEY, JSON.stringify(selectedLanguages));
+        localStorage.setItem(LANGUAGE_ONBOARDING_KEY, 'true');
+      } catch (e) {
+        console.error('Failed to sync language preferences:', e);
+      }
+    }
+  }, [hasChosenLanguage, selectedLanguages]);
 
   // Filtered channels based on multi-selected languages, search, and favorites tab
   const filteredChannels = useMemo(() => {
@@ -1653,6 +1694,15 @@ export default function App() {
             </>
           )}
         </main>
+      )}
+
+      {/* SLEEK DARK FOOTER WITH DETAILS & IN-FOOTER CONTACT FORM */}
+      {!isFullscreenTV && (
+        <Footer
+          onNavigateTab={setActiveNavTab}
+          favoritesCount={favorites.length}
+          onToggleFullscreen={setIsFullscreenTV}
+        />
       )}
     </div>
   );
